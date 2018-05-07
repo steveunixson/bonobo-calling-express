@@ -4,8 +4,6 @@ import express from 'express'
 import App from './config/express'
 import serve from 'express-static'
 import config from './config/mongodb'
-import login, { passportAll } from './controllers/passport'
-import passport from 'passport'
 
 
 const log = require('./libs/log')(module);
@@ -20,11 +18,11 @@ app.post('/api/login', login.getUsers)
 
 app.post('/api/signin', login.postUsers)
 
-app.all('*', passportAll)
+app.all('*', )
 
 //all routes from this point are now protected by passport
 
-app.get('/message', passport.authenticate('bearer', { session: false }), function(req, res) {
+app.get('/message',  function(req, res) {
      res.send('ok')
   });
   
