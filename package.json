@@ -21,6 +21,9 @@
     "jsonwebtoken": "^8.2.1",
     "mongoose": "^5.0.17",
     "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "save-to-mongo": "^1.0.0",
+    "winston": "^2.4.2",
     "xlsx-to-json": "^0.3.0",
     "xlsx-to-json-lc": "^0.5.0"
   },
