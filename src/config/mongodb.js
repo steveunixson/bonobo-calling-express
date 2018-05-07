@@ -1,5 +1,7 @@
+require('dotenv').config()
 module.exports = {
 
-    'database': process.env.DB_LOCALHOST
+    'database': 'mongodb://' + process.env.DB_HOST + '/' + process.env.DB_NAME,
+    'secret': process.env.SRV_SECRET
 
 };
