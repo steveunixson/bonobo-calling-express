@@ -16,11 +16,16 @@ var Status = new Schema({
           type: String,
           required: true
         },
-        number: {type: Number,
+        number: {
+          type: Number,
           required: true,
-          index: {unique: true}},
+        },
+        base: {
+          type: String,
+          required: true
+        },
 
-        appointment_time: String,
+        time: String,
         age:              Number,
         came:             Boolean,
         month:            String,
