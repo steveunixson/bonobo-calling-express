@@ -5,7 +5,7 @@ import App from './config/express'
 import serve from 'express-static'
 import config from './config/mongodb'
 import error from './libs/error'
-import auth, {token} from './controllers/auth'
+import auth, {token, tokenUser} from './controllers/auth'
 import upload from './controllers/upload'
 import stats from './controllers/status'
 
@@ -21,10 +21,11 @@ new App(app)
 app.post('/api/signup', auth.setupPost)
 app.post('/api/signup/user', auth.token, auth.setupUserPost)
 
-app.post('/api/upload', upload.postUpload) //Uploads phone base
-app.get('/api/upload', upload.getUpload) //Shows which phone base collections do we have
-app.post('/api/numbers', upload.getPhone) //Shows specific phone number from given collection
-app.post('/api/statistics', stats.postStatus) //POST statistics from user
+app.post('/api/upload', auth.token, upload.postUpload) //Uploads phone base
+app.get('/api/upload', auth.token, upload.getUpload) //Shows which phone base collections do we have
+
+app.post('/api/numbers', auth.tokenUser, upload.getPhone) //Shows specific phone number from given collection
+app.post('/api/statistics', auth.tokenUser, stats.postStatus) //POST statistics from user
 
 
 

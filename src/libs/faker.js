@@ -41,7 +41,7 @@ function jwtverify (token, req, res) {
     query.select('name password role');
     query.exec(function (err, user) {
 
-        if (err) return handleError(err);
+        if (err) return log.error(err);
 
         if (user.password === password && user.name === name && user.role === 'admin') {
             
@@ -57,12 +57,41 @@ function jwtverify (token, req, res) {
 
 }
 
+function jwtverifyUser (token, req, res) {
+    
+
+    var decoded = jwt_decode(token);
+    var name = decoded.name;
+    var password = decoded.password;
+    var role = decoded.role;
+
+    
+    var query = User.findOne({ name: new RegExp(name, 'i') });
+    query.select('name password role');
+    query.exec(function (err, user) {
+
+        if (err) return log.error(err);
+
+        if (user.password === password && user.name === name && user.role === 'user') {
+            
+            log.info('Acsess granted! Welcome: ' + user.name)
+
+        } else {
+            
+            return res.status(403).send('Forbiden');
+            
+        }
+   
+});
+
+}
 
 
   module.exports.passwordGen = passwordGen;
   module.exports.bcryptGen = bcryptGen;
   module.exports.usertokenGen = usertokenGen;
   module.exports.jwtverify = jwtverify;
+  module.exports.jwtverifyUser = jwtverifyUser;
   
 
   //objects

@@ -1,5 +1,5 @@
 import User from '../models/users'
-import {passwordGen, usertokenGen, jwtverify} from '../libs/faker'
+import {passwordGen, usertokenGen, jwtverify, jwtverifyUser} from '../libs/faker'
 import {validateSetupPost} from '../libs/validate'
 
 const log = require('../libs/log')(module);
@@ -80,7 +80,8 @@ exports.tokenUser = function (req, res, next) {
     } else {
         var token = JSON.stringify(req.headers.authorization).replace('Bearer ','')
             
-            jwtverify(token, req, res)
+            jwtverifyUser(token, req, res)
+            next()
             
             
     }
