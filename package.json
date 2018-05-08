@@ -11,6 +11,7 @@
   "author": "unixson",
   "license": "MIT",
   "dependencies": {
+    "JSONStream": "^1.3.2",
     "axios": "^0.18.0",
     "bcrypt": "^2.0.1",
     "bcrypt-nodejs": "0.0.3",
