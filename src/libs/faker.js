@@ -5,8 +5,6 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import config from '../config/mongodb'
 import jwt_decode from 'jwt-decode'
-import mongoose from 'mongoose'
-import User from '../models/users'
 
 const log = require('../libs/log')(module);
 
