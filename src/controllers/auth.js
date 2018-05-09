@@ -2,6 +2,14 @@ import User from '../models/users'
 import {passwordGen, usertokenGen, jwtverify, jwtverifyUser} from '../libs/faker'
 import {validateSetupPost} from '../libs/validate'
 
+
+import faker from 'faker'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import config from '../config/mongodb'
+import jwt_decode from 'jwt-decode'
+import mongoose from 'mongoose'
+
 const log = require('../libs/log')(module);
 
 exports.setupPost = function (req, res) {
@@ -59,44 +67,135 @@ exports.setupUserPost = function (req, res) {
 }
 
 exports.token = function (req, res, next) {
-    
+
     if (!req.headers.authorization) {
+        log.error('UNAUTHORIZED USER HAS BEEN SPOTED!')
         res.status(401).send('Unauthorized')
     } else {
         var token = JSON.stringify(req.headers.authorization).replace('Bearer ','')
+        
+            try {
+                var decoded = jwt_decode(token);
+            } catch(error){
+
+                log.error('USER HAS INVALID TOKEN! BAD USER!')
+                return res.status(500).send('Internal Server Error');
             
-            jwtverify(token, req, res)
-            next()
+            }
+            var name = decoded.name;
+            var password = decoded.password;
+            var role = decoded.role;
+        
+                var query = User.findOne({ name: new RegExp(name, 'i') });
+            query.select('name password role');
+            try {
+                query.exec(function (err, user) {
+        
+                    if (user.password === password && user.name === name && user.role === 'admin') {
+                        
+                        log.info('Acsess granted for: ' + user.name)
+                        next()
+                        
             
-            
+                    } else  {
+                        log.error('user ' + user.name + ' Permission denied')
+                        return res.status(403).send('Forbidden')
+                    }
+               
+            });
+            } catch(err){
+                return res.status(500).send('Internal Server Error');
+            }
+
+        
+        
     }
+
     
 }
 
 exports.tokenUser = function (req, res, next) {
     
     if (!req.headers.authorization) {
+        log.error('UNAUTHORIZED USER HAS BEEN SPOTED!')
         res.status(401).send('Unauthorized')
     } else {
         var token = JSON.stringify(req.headers.authorization).replace('Bearer ','')
+        
+            try {
+                var decoded = jwt_decode(token);
+            } catch(error){
+
+                log.error('USER HAS INVALID TOKEN! BAD USER!')
+                return res.status(500).send('Internal Server Error');
             
-            jwtverifyUser(token, req, res)
-            next()
+            }
+            var name = decoded.name;
+            var password = decoded.password;
+            var role = decoded.role;
+        
+                var query = User.findOne({ name: new RegExp(name, 'i') });
+            query.select('name password role');
+            try {
+                query.exec(function (err, user) {
+        
+                    if (user.password === password && user.name === name && user.role === 'user') {
+                        
+                        log.info('Acsess granted for: ' + user.name)
+                        next()
+                        
             
-            
+                    } else  {
+                        log.error('user ' + user.name + ' Permission denied')
+                        return res.status(403).send('Forbidden')
+                    }
+               
+            });
+            } catch(err){
+                return res.status(500).send('Internal Server Error');
+            }
+
     }
     
 }
 
-//TODO
-//add admin to db via post request -- DONE
 
-//add user to db via post request --DONE
 
-//create token with everything encoded --DONE
+exports.loginUser = function (req, res) {
+    var password = req.body.password
+    var username = req.body.username
+    try {
+        if (typeof(password) == 'undefined' || typeof(username) == 'undefined') {
+            throw error
+        }
+      }
+      catch(error) {
+        return res.status(403).send('Bad Request');
+      }
 
-//function that decodes jwt and checks if user is an admin
+      var query = User.findOne({ name: new RegExp(username, 'i') });
+      
+      query.select('name password token');
+      query.exec(function (err, user) {
+  
+          if (err) return log.error(err);
 
-//function for every request to protect the routes
+          try {
+            if (username !== user.name || password !== user.password) {
+                throw error
+            }
+          }
+          catch(error) {
+            return res.status(403).send('Bad Request');
+          }
+          
+          log.info('A user has been logged in! Welcome: ' + user.name)
 
-//if not than send him 403 to routes that has admin rights
+          res.json(
+            { 
+              welcome: user.name,
+              token: user.token
+            }
+        )
+    });
+}

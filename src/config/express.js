@@ -1,4 +1,3 @@
-import bodyParser from 'body-parser'
 import compression from 'compression'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -9,8 +8,7 @@ import passport from 'passport'
 
 
 function App(app) {
-    app.use(bodyParser.urlencoded({ extended: false }))
-    app.use(bodyParser.json()) // parse application/json
+    
     app.use(compression({
         threshold: 512
       }));
