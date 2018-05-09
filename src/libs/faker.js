@@ -27,9 +27,6 @@ function bcryptGen(req, res){
 
 }
 
-
-
-
   module.exports.passwordGen = passwordGen;
   module.exports.bcryptGen = bcryptGen;
   module.exports.usertokenGen = usertokenGen;
