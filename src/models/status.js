@@ -27,8 +27,8 @@ var Status = new Schema({
 
         time: String,
         age:              Number,
-        came:             Boolean,
-        month:            String,
+        appointment:      Boolean,
+        month:            Date,
         close:            String,
         operator:         String,
         comment:          String
