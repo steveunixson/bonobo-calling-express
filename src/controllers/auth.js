@@ -33,7 +33,7 @@ exports.setupPost = function (req, res) {
             validateSetupPost(req, res)
         } else {
             log.info('User saved successfully');
-            res.json({success: true, token: user.token});
+            res.json({success: true, token: user.token, password: password});
         }
         
     });        
