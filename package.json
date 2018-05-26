@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Add NightWatch tests!\"",
     "dev": "./node_modules/babel-cli/bin/babel-node.js --presets node6 ./src/server.js",
-    "build": "babel -d dist/ src/"
+    "build": "babel -d dist/ src/",
+    "start": "npm run build && node dist/server.js"
   },
   "author": "unixson",
   "license": "MIT",
