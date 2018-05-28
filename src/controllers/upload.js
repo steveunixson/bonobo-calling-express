@@ -4,6 +4,7 @@ const log = require('../libs/log')(module);
 var JSONStream = require('JSONStream');
 var fs = require('fs');
 var path = require('path');
+const mongoose = require('mongoose')
  
 // init stream 
  
