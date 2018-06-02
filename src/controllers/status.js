@@ -35,6 +35,44 @@ exports.postStatus = function (req, res) {
 
   }
 
+
+  exports.showStatus = function (req, res) {
+
+    var status = req.query.status
+
+    try{
+
+        Status.count({status : status}, function(err, count){
+          return res.json({status: count})
+      })
+    } catch(error){
+
+      return res.status(403).send("Error")
+    
+    }
+
+  }
+
+  exports.moreStatus = function (req, res) {
+
+    var status = req.query.status
+
+    try {
+            Status.find({status: status}, (err, statuses) =>{  
+              
+              return res.status(200).send(statuses);
+
+          });
+    } 
+    
+    catch(error){
+
+      return res.status(500).send(error)
+    
+    }
+
+  }
+
   exports.orders = function (req, res){
     
     var sales = new Sales({
@@ -67,6 +105,7 @@ exports.postStatus = function (req, res) {
 
           } catch(error){
             return res.status(500).send('Internal Server Error');
+            log.error(error)
           }
   }
 
@@ -85,4 +124,29 @@ exports.postStatus = function (req, res) {
             log.error('Internal Server Error');
             return res.status(500).send('Internal Server Error');
       }  
+  }
+
+  exports.monthConversion = function(req, res){
+
+    var month = req.query.month
+
+    try 
+      {
+        Sales.count({status: 'positive', date: month}, function(err, positive_deal){
+          Sales.count({status: 'negative', date: month}, function(err, negative_deal){
+                var conversion = positive_deal / (positive_deal + negative_deal) * 100
+              res.json({conversion: conversion})             
+          })
+        })
+      } 
+    
+    catch(error) 
+      {
+        return res.status(403).send('Error');
+        log.error(error)
+      }
+  }
+
+  exports.salary = function(req, res){
+    
   }

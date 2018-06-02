@@ -8,6 +8,7 @@ import config from './config/mongodb'
 import auth, {token, tokenUser} from './controllers/auth'
 import upload from './controllers/upload'
 import stats from './controllers/status'
+import { stat } from 'fs';
 
 
 const log = require('./libs/log')(module);
@@ -33,6 +34,9 @@ app.post('/api/statistics', auth.tokenUser, stats.postStatus); //POST statistics
 app.get('/api/appointments', stats.getSales) //
 app.get('/api/conversion', stats.getConversion) //
 app.post('/api/conversion', stats.orders) //
+app.get('/api/conversion/month', stats.monthConversion)
+app.get('/api/base', stats.showStatus)
+app.get('/api/statuses', stats.moreStatus)
 
 
 
