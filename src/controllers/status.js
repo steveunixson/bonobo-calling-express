@@ -1,5 +1,6 @@
 import Status from '../models/status'
 import Sales from '../models/conversion'
+import Salary from '../models/salary'
 
 const log = require('../libs/log')(module);
 
@@ -148,5 +149,113 @@ exports.postStatus = function (req, res) {
   }
 
   exports.salary = function(req, res){
+
+      var salary = new Salary({
+
+          intern : req.body.intern,
+          operator : req.body.operator,
+          demo : req.body.demo,
+          vite : req.body.vite
+      
+        })
+
+        salary.save(function (err) {
+          if (!err) {
+              log.debug("salary added to collection")
+              return res.json({status: 'OK'});
     
+          } else {
+    
+              log.error("INTERNAL ERROR AT sales.save");
+              return res.status(500).send('Internal Server Error');
+
+            }
+          });
+
   }
+
+  exports.salaryRemove = function(req, res){
+
+   try
+   {
+      Salary.findOneAndRemove(req.body.intern, (err, salary) => {
+
+         return res.json({message: "Removed"}) 
+
+      });
+   }
+   catch(error)
+   {
+    return res.status(500).send('Internal Error')
+   }
+
+  }
+
+  exports.salaryShow = function(req, res){
+
+    try
+    {
+      Salary.find((err, salary) => {
+
+      return res.json({salary: salary})
+
+      })
+    }
+
+    catch(error)
+    {
+      return res.status(500).send('Internal Error')
+      log.error(error)
+    }
+
+  }
+
+  exports.getSalary = function(req, res){
+    
+        var operator = req.body.operator;
+        var seconds_online = req.body.online;
+
+    try{
+
+      Sales.count({status: 'positive', operator: operator, project: 'demo'}, function (err, positive_deal_demo){
+      
+        Sales.count({status: 'positive', operator: operator, project: 'vite'}, function (err, positive_deal_vite){
+      
+          Salary.find({}, (err, salary) =>{
+           
+            var cost_demo = salary[0].demo
+            var cost_vite = salary[0].vite
+            var cost_intern = salary[0].intern
+            var cost_operator = salary[0].operator
+
+            salaryCount(cost_demo, cost_vite, positive_deal_demo, positive_deal_vite, cost_intern, cost_operator, seconds_online)
+    
+          });
+    
+        })
+        
+      })
+
+
+      function salaryCount(cost_demo, cost_vite, positive_deal_demo, positive_deal_vite, cost_intern, cost_operator, seconds_online){
+
+        var salary = cost_operator * seconds_online + cost_vite * positive_deal_vite + cost_demo * positive_deal_demo;
+        return res.json({salary : salary, vite : positive_deal_vite, demo : positive_deal_demo})
+
+      }
+
+          
+    }
+    catch(error){
+      return res.status(500).send('Internal Error')
+      console.log(error)
+    }
+
+  }
+
+  //Query String: ?strID=XXXX&strName=yyyy&strDate=zzzzz
+
+  //доступ к объектам блять
+  //объект[0].ключ -- выдаст значение
+  //а вот какого хуя оно именно так работает одному богу известно
+  //я сгорел, несите нового НЕНАВИСТЬ!!!11

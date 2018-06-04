@@ -38,6 +38,13 @@ app.get('/api/conversion/month', stats.monthConversion)
 app.get('/api/base', stats.showStatus)
 app.get('/api/statuses', stats.moreStatus)
 
+app.post('/api/salary', stats.salary) //задает начальные условия подсчета ЗП
+app.delete('/api/salary', stats.salaryRemove) //удаляет начальные условия
+app.get('/api/salary', stats.salaryShow) //показывает начальные условия
+
+app.post('/api/salary/user', stats.getSalary) //считает ЗП
+
+
 
 
 app.listen(port, () => log.info('Calling Bonobo Now Running On :' + port));
