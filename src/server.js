@@ -28,6 +28,7 @@ app.post('/api/signup/user', auth.token, auth.setupUserPost); //
 app.post('/api/upload', auth.token, upload.postUpload); //Uploads phone base //
 app.post('/api/login', auth.loginUser); //
 app.get('/api/upload', auth.token, upload.getUpload); //Shows which phone base collections do we have //
+app.put('/api/upload', upload.activity) //меняет активность базы
 app.post('/api/numbers', auth.tokenUser, upload.getPhone); //Shows specific phone number from given collection 
 app.post('/api/statistics', auth.tokenUser, stats.postStatus); //POST statistics from user
 
@@ -44,7 +45,7 @@ app.get('/api/salary', stats.salaryShow) //показывает начальны
 
 app.post('/api/salary/user', stats.getSalary) //считает ЗП
 
-app.get('/api/template', upload.getTemplate)
+app.get('/api/template', upload.getTemplate) //отдает шаблон для базы клиентов
 
 
 

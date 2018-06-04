@@ -143,3 +143,20 @@ function find (name, query, cb) {
      }
 
   }
+
+  exports.activity = function(req, res){
+
+    var name = req.body.name
+    var type = req.body.type
+
+    try
+    {
+      Match.findOneAndUpdate({name: name}, {$set:{type : type}}, (err, base) => {
+        return res.json({message: "Updated"})
+      })
+    }
+    catch(error)
+    {
+      return res.status(500).send('Internal Error')
+    }
+  }
