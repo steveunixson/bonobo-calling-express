@@ -39,6 +39,26 @@ exports.setupPost = function (req, res) {
     });        
 }
 
+exports.userRemove = function(req, res){
+
+    var name = req.body.name
+
+    try
+    {
+       User.findOneAndRemove({name: name}, (err, users) => {
+ 
+          return res.json({message: "Removed"}) 
+ 
+       });
+    }
+    catch(error)
+    {
+     return res.status(500).send('Internal Error')
+    }
+ 
+   }
+
+
 exports.setupUserPost = function (req, res) {
     
     var name = req.body.username;

@@ -23,7 +23,7 @@ app.use(bodyParser.json()) // parse application/json
 
 app.post('/api/signup', auth.setupPost); //
 app.post('/api/signup/user', auth.token, auth.setupUserPost); //
-
+app.delete('/api/signup/user', auth.userRemove) //удаляет пользователя
 
 app.post('/api/upload', auth.token, upload.postUpload); //Uploads phone base //
 app.post('/api/login', auth.loginUser); //
@@ -36,6 +36,7 @@ app.get('/api/appointments', stats.getSales) //
 app.get('/api/conversion', stats.getConversion) //
 app.post('/api/conversion', stats.orders) //
 app.get('/api/conversion/month', stats.monthConversion)
+app.get('/api/conversion/base', stats.getBaseConversion)// конверсия базы
 app.get('/api/base', stats.showStatus)
 app.get('/api/statuses', stats.moreStatus)
 
