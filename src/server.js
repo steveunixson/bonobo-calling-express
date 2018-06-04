@@ -44,6 +44,8 @@ app.get('/api/salary', stats.salaryShow) //показывает начальны
 
 app.post('/api/salary/user', stats.getSalary) //считает ЗП
 
+app.get('/api/template', upload.getTemplate)
+
 
 
 

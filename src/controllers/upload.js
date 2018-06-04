@@ -128,3 +128,18 @@ function find (name, query, cb) {
       return res.send(docs);
   });   
   }
+
+  exports.getTemplate = function(req, res){
+
+    var file = 'tmp/templates/База.xlsx'
+     try
+     {
+      return res.download(file);
+     }
+
+     catch(error)
+     {
+      return res.status(500).send('Internal Error');
+     }
+
+  }
