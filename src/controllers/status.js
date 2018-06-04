@@ -253,6 +253,27 @@ exports.postStatus = function (req, res) {
 
   }
 
+  exports.getBaseConversion = function(req, res){
+    var base = req.query.base
+   try
+   {
+    Status.count({status: 'запись', base : base}, function(err, positive_deal){
+      Status.count({status: 'отказ', base : base}, function(err, negative_deal){
+
+          var conversion = positive_deal / (positive_deal + negative_deal) * 100
+          res.json({conversion: conversion})
+      
+        })
+    })
+   }
+   catch(error)
+   {
+    return res.status(500).send('Internal Error')
+    console.log(error)
+   }
+  
+  }
+
   //Query String: ?strID=XXXX&strName=yyyy&strDate=zzzzz
 
   //доступ к объектам блять
