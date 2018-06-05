@@ -36,6 +36,24 @@ exports.postStatus = function (req, res) {
 
   }
 
+exports.deleteStatus = function(req, res){
+
+  var status = req.body.status
+  var comment = req.body.comment
+  var client = req.body.client
+
+  try 
+   {
+    Status.findOneAndRemove({status : status, comment : comment, client : client}, (err, statuses) => {
+      return res.json({status: "Removed"})
+    })
+   }
+   catch(error)
+   {
+    return res.status(500).send("Internal Error")
+   }
+
+}
 
   exports.showStatus = function (req, res) {
 
