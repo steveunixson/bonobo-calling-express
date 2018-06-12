@@ -4,3 +4,4 @@ dist
 .env
 data.json
 data.xlsx
+.Dockerfile.swp

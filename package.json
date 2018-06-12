@@ -7,7 +7,10 @@
     "test": "echo \"Add NightWatch tests!\"",
     "dev": "./node_modules/babel-cli/bin/babel-node.js --presets node6 ./src/server.js",
     "build": "babel -d dist/ src/",
-    "start": "npm run build && node dist/server.js"
+    "start": "npm run build && node dist/server.js",
+    "audit": "npm-audit",
+    "postinstall": "npm-audit",
+    "pretest": "npm-audit"
   },
   "author": "unixson",
   "license": "MIT",
@@ -45,6 +48,7 @@
     "babel-plugin-transform-regenerator": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-node6": "^11.0.0",
-    "babel-preset-stage-2": "^6.24.1"
+    "babel-preset-stage-2": "^6.24.1",
+    "npm-audit": "0.0.3"
   }
 }
