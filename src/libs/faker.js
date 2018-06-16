@@ -14,8 +14,8 @@ function passwordGen() {
     return faker.internet.password();
 }
 
-function usertokenGen(name, password, role) {
-    return jwt.sign({ name: name, password: password, role: role }, config.secret);
+function usertokenGen(name, password, role, domain) {
+    return jwt.sign({ name: name, password: password, role: role, domain : domain}, config.secret);
 }
 
 function bcryptGen(req, res){
