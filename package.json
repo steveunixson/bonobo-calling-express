@@ -10,7 +10,8 @@
     "start": "npm run build && node dist/server.js",
     "audit": "npm-audit",
     "postinstall": "npm-audit",
-    "pretest": "npm-audit"
+    "pretest": "npm-audit",
+    "docker": "docker-compose -f docker-compose.yml up -d --build"
   },
   "author": "unixson",
   "license": "MIT",
