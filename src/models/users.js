@@ -26,7 +26,7 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    hash: {
+    domain: {
       type: String
     }
 });
