@@ -1,7 +1,8 @@
 node_modules
 yarn-error.log
 dist
-.env
 data.json
 data.xlsx
+data
+.env
 .Dockerfile.swp
