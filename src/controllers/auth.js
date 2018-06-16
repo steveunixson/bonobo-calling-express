@@ -1,14 +1,8 @@
 import User from '../models/users'
 import {passwordGen, usertokenGen, jwtverify, jwtverifyUser} from '../libs/faker'
 import {validateSetupPost} from '../libs/validate'
-
-
-import faker from 'faker'
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import config from '../config/mongodb'
 import jwt_decode from 'jwt-decode'
-import mongoose from 'mongoose'
+
 
 const log = require('../libs/log')(module);
 
@@ -16,27 +10,43 @@ exports.setupPost = function (req, res) {
 
     var name = req.body.username;
     var role = 'admin';
-    var password = passwordGen()
-
-    var user = new User({ 
-        name: req.body.username, 
-        password: password,
-        organization: req.body.organization,
-        role: "admin",
-        token: usertokenGen(name, password, role)
-      });
+    var password = passwordGen();
+    var domain = req.protocol + '://' + req.get('host');
     
-      // save the sample user
-      user.save(function(err) {
+      User.findOne({name: name}, (err, user)=> {
+          if (err) 
+            {
+              console.log(err)
+            }
+          if (user)
+            {
+                return res.status(403).send('User exist!')
+            }
+            else {
 
-        if (err) {
-            validateSetupPost(req, res)
-        } else {
-            log.info('User saved successfully');
-            res.json({success: true, token: user.token, password: password});
-        }
-        
-    });        
+                var user = new User({ 
+                    name: req.body.username, 
+                    password: password,
+                    organization: req.body.organization,
+                    role: "admin",
+                    token: usertokenGen(name, password, role, domain),
+                    domain: domain
+                  });
+
+                user.save(function(err, user) {
+
+                    if (err) {
+                        validateSetupPost(req, res)
+                    } else {
+                        log.info('User saved successfully');
+                        return res.json({success: true, token: user.token, password: password});
+                    }
+                    
+                });
+            }
+      })
+
+             
 }
 
 exports.userRemove = function(req, res){
@@ -63,27 +73,43 @@ exports.setupUserPost = function (req, res) {
     
     var name = req.body.username;
     var role = 'user';
-    var password = req.body.password
+    var password = req.body.password;
+    var domain = req.protocol + '://' + req.get('host');
 
-    var user = new User({ 
-        name: req.body.username, 
-        password: req.body.password,
-        organization: req.body.organization,
-        role: "user",
-        token: usertokenGen(name, password, role)
-      });
+    User.findOne({name : name}, (err, user) => {
+        if (err) 
+            {
+              console.log(err)
+            }
+          if (user)
+            {
+                return res.status(403).send('User exist!')
+            }
+            else {
+                var user = new User({ 
+                    name: req.body.username, 
+                    password: req.body.password,
+                    organization: req.body.organization,
+                    role: "user",
+                    token: usertokenGen(name, password, role, domain),
+                    domain: domain
+                  });
+                
+                  // save the sample user
+                  user.save(function(err) {
+            
+                    if (err) {
+                        validateSetupPost(req, res)
+                    } else {
+                        log.info('User saved successfully');
+                        return res.json({success: true, token: user.token});
+                    }
+                    
+                });
+            }
+    })
     
-      // save the sample user
-      user.save(function(err) {
-
-        if (err) {
-            validateSetupPost(req, res)
-        } else {
-            log.info('User saved successfully');
-            return res.json({success: true, token: user.token});
-        }
-        
-    });        
+   
 }
 
 exports.token = function (req, res, next) {
@@ -105,7 +131,7 @@ exports.token = function (req, res, next) {
             var name = decoded.name;
             var password = decoded.password;
             var role = decoded.role;
-        
+            
                 var query = User.findOne({ name: new RegExp(name, 'i') });
             query.select('name password role');
             try {
@@ -190,7 +216,7 @@ exports.loginUser = function (req, res) {
         }
       }
       catch(error) {
-        return res.status(403).send('Bad Request');
+        return res.status(403).send('login or password incorrect');
       }
 
       var query = User.findOne({ name: new RegExp(username, 'i') });
