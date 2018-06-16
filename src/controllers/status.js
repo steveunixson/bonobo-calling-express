@@ -1,6 +1,7 @@
 import Status from '../models/status'
 import Sales from '../models/conversion'
 import Salary from '../models/salary'
+import User from '../models/users'
 
 const log = require('../libs/log')(module);
 
@@ -90,6 +91,28 @@ exports.deleteStatus = function(req, res){
     
     }
 
+  }
+
+  exports.statusByOperator = function (req, res) {
+
+    var operator = req.query.operator
+
+
+    Status.find({operator : operator}, (err, operator) => {
+      if (err) 
+      {
+        
+        return res.status(500).send("Internal Error")
+        log.error(err)
+
+      } 
+      else 
+      
+      {
+        return res.status(200).json({operator : operator})
+      }
+    })
+    
   }
 
   exports.orders = function (req, res){
