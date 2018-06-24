@@ -8,7 +8,9 @@ const log = require('../libs/log')(module);
 var date = new Date();
 
 exports.postStatus = function (req, res) {
-    
+  
+    var key = req.headers['x-api-key']
+
     var status = new Status({
       status:          req.body.status, //required
       number:          req.body.number, //required
@@ -21,6 +23,7 @@ exports.postStatus = function (req, res) {
       close:           req.body.close,
       operator:        req.body.operator,
       comment:         req.body.comment,
+      apikey:          key
     });
 
     status.save(function (err) {
@@ -42,10 +45,11 @@ exports.deleteStatus = function(req, res){
   var status = req.body.status
   var comment = req.body.comment
   var client = req.body.client
+  var key = req.headers['x-api-key']
 
   try 
    {
-    Status.findOneAndRemove({status : status, comment : comment, client : client}, (err, statuses) => {
+    Status.findOneAndRemove({status : status, comment : comment, client : client, apikey: key}, (err, statuses) => {
       return res.json({status: "Removed"})
     })
    }
@@ -59,10 +63,11 @@ exports.deleteStatus = function(req, res){
   exports.showStatus = function (req, res) {
 
     var status = req.query.status
+    var key = req.headers['x-api-key']
 
     try{
 
-        Status.count({status : status}, function(err, count){
+        Status.count({status : status, apikey: key}, function(err, count){
           return res.json({status: count})
       })
     } catch(error){
@@ -76,9 +81,10 @@ exports.deleteStatus = function(req, res){
   exports.moreStatus = function (req, res) {
 
     var status = req.query.status
+    var key = req.headers['x-api-key']
 
     try {
-            Status.find({status: status}, (err, statuses) =>{  
+            Status.find({status: status, apikey: key}, (err, statuses) =>{  
               
               return res.status(200).send(statuses);
 
@@ -96,9 +102,9 @@ exports.deleteStatus = function(req, res){
   exports.statusByOperator = function (req, res) {
 
     var operator = req.query.operator
+    var key = req.headers['x-api-key']
 
-
-    Status.find({operator : operator}, (err, operator) => {
+    Status.find({operator : operator, apikey: key}, (err, operator) => {
       if (err) 
       {
         
@@ -117,12 +123,14 @@ exports.deleteStatus = function(req, res){
 
   exports.orders = function (req, res){
     
+    var key = req.headers['x-api-key']
     var sales = new Sales({
       shift: req.body.shift,
       project: req.body.project,
       date: date,
       operator: req.body.operator,
-      status: req.body.status
+      status: req.body.status,
+      apikey: key
     })
     
     sales.save(function (err) {
@@ -139,23 +147,28 @@ exports.deleteStatus = function(req, res){
   }
 
   exports.getSales = function(req, res){
-          try{
-                Sales.count({total: 1}, function(err, c) {
-                  return res.json({appointments: c});
-                });
+    var key = req.headers['x-api-key']
+ try
+      {
+        Sales.count({total: 1, apikey: key}, function(err, c) 
+        {
+           return res.json({appointments: c});
+        });
 
-
-          } catch(error){
+      } 
+          catch(error)
+          {
             return res.status(500).send('Internal Server Error');
             log.error(error)
           }
   }
 
   exports.getConversion = function(req, res){
-          try{
+    var key = req.headers['x-api-key']  
+        try{
           
-            Sales.count({status: 'positive'}, function(err, positive_deal){
-              Sales.count({status: 'negative'}, function(err, negative_deal){
+            Sales.count({status: 'positive', apikey: key}, function(err, positive_deal){
+              Sales.count({status: 'negative', apikey: key}, function(err, negative_deal){
                     var conversion = positive_deal / (positive_deal + negative_deal) * 100
                   res.json({conversion: conversion})             
               })
@@ -171,11 +184,12 @@ exports.deleteStatus = function(req, res){
   exports.monthConversion = function(req, res){
 
     var month = req.query.month
+    var key = req.headers['x-api-key']
 
     try 
       {
-        Sales.count({status: 'positive', date: month}, function(err, positive_deal){
-          Sales.count({status: 'negative', date: month}, function(err, negative_deal){
+        Sales.count({status: 'positive', date: month, apikey: key}, function(err, positive_deal){
+          Sales.count({status: 'negative', date: month, apikey: key}, function(err, negative_deal){
                 var conversion = positive_deal / (positive_deal + negative_deal) * 100
               res.json({conversion: conversion})             
           })
@@ -191,12 +205,14 @@ exports.deleteStatus = function(req, res){
 
   exports.salary = function(req, res){
 
+    var key = req.headers['x-api-key']
       var salary = new Salary({
 
           intern : req.body.intern,
           operator : req.body.operator,
           demo : req.body.demo,
-          vite : req.body.vite
+          vite : req.body.vite,
+          apikey: key
       
         })
 
@@ -217,9 +233,12 @@ exports.deleteStatus = function(req, res){
 
   exports.salaryRemove = function(req, res){
 
+    var intern = req.body.intern
+    var key = req.headers['x-api-key']
+
    try
    {
-      Salary.findOneAndRemove(req.body.intern, (err, salary) => {
+      Salary.findOneAndRemove(({intern: intern, apikey: key}), (err, salary) => {
 
          return res.json({message: "Removed"}) 
 
@@ -234,9 +253,11 @@ exports.deleteStatus = function(req, res){
 
   exports.salaryShow = function(req, res){
 
+    var key = req.headers['x-api-key']
+
     try
     {
-      Salary.find((err, salary) => {
+      Salary.find(( { apikey: key } ),(err, salary) => {
 
       return res.json({salary: salary})
 
@@ -255,14 +276,15 @@ exports.deleteStatus = function(req, res){
     
         var operator = req.body.operator;
         var seconds_online = req.body.online;
+        var key = req.headers['x-api-key']
 
     try{
 
-      Sales.count({status: 'positive', operator: operator, project: 'demo'}, function (err, positive_deal_demo){
+      Sales.count({status: 'positive', operator: operator, project: 'demo', apikey: key}, function (err, positive_deal_demo){
       
-        Sales.count({status: 'positive', operator: operator, project: 'vite'}, function (err, positive_deal_vite){
+        Sales.count({status: 'positive', operator: operator, project: 'vite', apikey: key}, function (err, positive_deal_vite){
       
-          Salary.find({}, (err, salary) =>{
+          Salary.find(( {apikey : key } ), (err, salary) =>{
            
             var cost_demo = salary[0].demo
             var cost_vite = salary[0].vite
@@ -296,10 +318,11 @@ exports.deleteStatus = function(req, res){
 
   exports.getBaseConversion = function(req, res){
     var base = req.query.base
+    var key = req.headers['x-api-key']
    try
    {
-    Status.count({status: 'запись', base : base}, function(err, positive_deal){
-      Status.count({status: 'отказ', base : base}, function(err, negative_deal){
+    Status.count({status: 'запись', base : base, apikey: key}, function(err, positive_deal){
+      Status.count({status: 'отказ', base : base, apikey: key}, function(err, negative_deal){
 
           var conversion = positive_deal / (positive_deal + negative_deal) * 100
           res.json({conversion: conversion})

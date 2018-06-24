@@ -3,17 +3,16 @@ import {passwordGen, usertokenGen, jwtverify, jwtverifyUser} from '../libs/faker
 import {validateSetupPost} from '../libs/validate'
 import jwt_decode from 'jwt-decode'
 
-
 const log = require('../libs/log')(module);
 
 exports.setupPost = function (req, res) {
 
+    var key = req.headers['x-api-key']
     var name = req.body.username;
     var role = 'admin';
     var password = passwordGen();
-    var domain = req.protocol + '://' + req.get('host');
-    
-      User.findOne({name: name}, (err, user)=> {
+
+      User.findOne({name: name, apikey: key}, (err, user)=> {
           if (err) 
             {
               console.log(err)
@@ -30,7 +29,8 @@ exports.setupPost = function (req, res) {
                     organization: req.body.organization,
                     role: "admin",
                     token: usertokenGen(name, password, role, domain),
-                    domain: domain
+                    apikey: key
+
                   });
 
                 user.save(function(err, user) {
@@ -51,11 +51,12 @@ exports.setupPost = function (req, res) {
 
 exports.userRemove = function(req, res){
 
+    var key = req.headers['x-api-key']
     var name = req.body.name
 
     try
     {
-       User.findOneAndRemove({name: name}, (err, users) => {
+       User.findOneAndRemove({name: name, apikey: key}, (err, users) => {
  
           return res.json({message: "Removed"}) 
  
@@ -74,9 +75,9 @@ exports.setupUserPost = function (req, res) {
     var name = req.body.username;
     var role = 'user';
     var password = req.body.password;
-    var domain = req.protocol + '://' + req.get('host');
+    var key = req.headers['x-api-key']
 
-    User.findOne({name : name}, (err, user) => {
+    User.findOne({name : name, apikey: key}, (err, user) => {
         if (err) 
             {
               console.log(err)
@@ -92,7 +93,7 @@ exports.setupUserPost = function (req, res) {
                     organization: req.body.organization,
                     role: "user",
                     token: usertokenGen(name, password, role, domain),
-                    domain: domain
+                    apikey: key
                   });
                 
                   // save the sample user

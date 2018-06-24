@@ -32,12 +32,13 @@ exports.postUpload = function(req, res){
     return res.status(400).send('No comment was specified.');
    
 ////////////////////////////////////////////////////////////
-
+var key = req.headers['x-api-key']
 ////////////////////////////////////////////////////////////
 var match = new Match({
   name: req.body.name,
   type: req.body.type,
-  comment: req.body.comment
+  comment: req.body.comment,
+  apikey: key
 });
 match.save(function (err) {
   if (!err) {
@@ -107,7 +108,8 @@ match.save(function (err) {
 
 
   exports.getUpload = function(req, res){
-    Match.find(function(err, users) {
+    var key = req.headers['x-api-key']
+    Match.find({apikey: key},function(err, users) {
         if (err)
           res.send(err);
     
@@ -125,7 +127,14 @@ function find (name, query, cb) {
     return res.status(400).send('No base was specified.');
   
     find(req.body.base, {_id : req.body._id}, function (err, docs) {
-      return res.send(docs);
+      if (err) 
+      {
+        return res.status(404).send('Not Found')
+      }
+      else 
+      {
+        return res.send(docs);
+      }
   });   
   }
 
@@ -148,10 +157,11 @@ function find (name, query, cb) {
 
     var name = req.body.name
     var type = req.body.type
+    var key = req.headers['x-api-key']
 
     try
     {
-      Match.findOneAndUpdate({name: name}, {$set:{type : type}}, (err, base) => {
+      Match.findOneAndUpdate({name: name, apikey: key}, {$set:{type : type}}, (err, base) => {
         return res.json({message: "Updated"})
       })
     }
