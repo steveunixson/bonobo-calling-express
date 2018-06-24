@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('../config/mongodb');
 const log = require('../libs/log')(module);
-mongoose.connect(config.database);
+
 
 var Schema = mongoose.Schema;
 
@@ -19,7 +19,9 @@ var Sales = new Schema({
       operator: {
           type: String
       },
-      status: String
+      status: String,
+
+      apikey: String
 });
 
 

@@ -26,9 +26,7 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    domain: {
-      type: String
-    }
+    apikey: String
 });
 
 UserSchema.pre('save', function() {
