@@ -28,7 +28,7 @@ exports.setupPost = function (req, res) {
                     password: password,
                     organization: req.body.organization,
                     role: "admin",
-                    token: usertokenGen(name, password, role, domain),
+                    token: usertokenGen(name, password, role),
                     apikey: key
 
                   });
@@ -92,7 +92,7 @@ exports.setupUserPost = function (req, res) {
                     password: req.body.password,
                     organization: req.body.organization,
                     role: "user",
-                    token: usertokenGen(name, password, role, domain),
+                    token: usertokenGen(name, password, role),
                     apikey: key
                   });
                 
