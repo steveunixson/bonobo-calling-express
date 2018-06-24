@@ -171,7 +171,6 @@ exports.key = function (req, res, next)
         return res.status(403).send('Unathorized: no key provided!'); 
     }    
     var key = req.headers['x-api-key']
-    console.log(key)
     
     //потом нужно провалидирровать ключ
 
